@@ -1,10 +1,8 @@
 version: "3.7"
 
 services:
-    bobby-b:
-        build:
-            context: .
-            dockerfile: docker/Dockerfile
-        container_name: bobby-b
+    donny-t:
+        image: kruhlmann/donny-t:onbuild
+        container_name: donny-t
         restart: unless-stopped
-        command: sh -c "ruby -Ilib /usr/app/bin/bobby-b -k your_token -f /usr/app/responses.txt"
+        command: sh -c "ruby -Ilib /usr/app/bin/donny-t -d discord_key -b twitter_bearer_token -s twitter_secret -t twitter_key

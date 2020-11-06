@@ -1,0 +1,39 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'optparse'
+require 'ostruct'
+require 'donny-t/donny'
+
+def validate_command_line_arguments(arguments)
+  has_discord_key = arguments.key? :discord_key
+  has_twitter_key = arguments.key? :twitter_key
+  has_twitter_secret = arguments.key? :twitter_secret
+  has_twitter_bearer_token = arguments.key? :twitter_bearer_token
+
+  has_discord_key && has_twitter_key && has_twitter_secret && has_twitter_bearer_token
+end
+
+def extract_command_line_arguments
+  options = {}
+  parser = OptionParser.new
+  parser.banner = 'Usage: donny-t [options]'
+  parser.on('-t KEY', '--twitter_key=KEY', 'Twitter API key', String)
+  parser.on('-s KEY', '--twitter_secret=KEY', 'Twitter API secret', String)
+  parser.on('-b KEY', '--twitter_bearer_token=KEY', 'Twitter API bearer token', String)
+  parser.on('-d KEY', '--discord_key=KEY', 'Discord API key', String)
+  parser.parse!(into: options)
+  options
+end
+
+def main
+  arguments = extract_command_line_arguments
+  puts arguments
+  arguments_are_valid = validate_command_line_arguments(arguments)
+
+  raise 'Invalid arguments' unless arguments_are_valid
+
+  Donny.new(arguments).start
+end
+
+main
