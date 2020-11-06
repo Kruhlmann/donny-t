@@ -48,7 +48,8 @@ class Donny
       raise StandardError.new if response.nil?
       collection += response
       response.empty? ? collection.flatten : auto_paginate_tweets(collection, response.last.id - 1, &block)
-    rescue StandardError
+    rescue StandardError => error
+      puts("Encountered error #{error}. Proceeding.")
       retry
     rescue Twitter::Error::TooManyRequests => error
       puts ("Rate limited by twitter. Sleeping for #{error.rate_limit.reset_in} seconds")
