@@ -10,7 +10,7 @@ Automatic MAGA
 
 ## Installing locally
 
-See [ruby gem](https://github.com/Kruhlmann/donny-t/packages/322179)
+See [ruby gem](https://github.com/Kruhlmann/donny-t/packages/492275)
 
 ## Building locally
 
