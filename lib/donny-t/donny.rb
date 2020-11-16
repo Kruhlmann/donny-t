@@ -42,28 +42,28 @@ class Donny
     @discord_client.run
   end
 
-  def auto_paginate_tweets(collection=[], max_id=nil, &block)
-    begin
-      response = yield(max_id)
-      raise StandardError.new if response.nil?
-      collection += response
-      response.empty? ? collection.flatten : auto_paginate_tweets(collection, response.last.id - 1, &block)
-    rescue StandardError => error
-      puts("Encountered error #{error}. Proceeding.")
-      retry
-    rescue Twitter::Error::TooManyRequests => error
-      puts ("Rate limited by twitter. Sleeping for #{error.rate_limit.reset_in} seconds")
-      sleep error.rate_limit.reset_in + 1
-      retry
-    end
+  def auto_paginate_tweets(collection = [], max_id = nil, &block)
+    response = yield(max_id)
+    raise StandardError if response.nil?
+
+    collection += response
+    response.empty? ? collection.flatten : auto_paginate_tweets(collection, response.last.id - 1, &block)
+  rescue StandardError => e
+    puts("Encountered error #{e}. Sleeping for 5 seconds.")
+    sleep 5
+    retry
+  rescue Twitter::Error::TooManyRequests => e
+    puts "Rate limited by twitter. Sleeping for #{e.rate_limit.reset_in} seconds"
+    sleep e.rate_limit.reset_in + 1
+    retry
   end
 
   def update_tweet_cache
     @tweet_cache = []
     auto_paginate_tweets do |max_id|
-      options = {count: 200, include_rts: true}
+      options = { count: 200, include_rts: true }
       options[:max_id] = max_id unless max_id.nil?
-      @tweet_cache += @twitter_client.user_timeline("realdonaldtrump", options)
+      @tweet_cache += @twitter_client.user_timeline('realdonaldtrump', options)
     end
   end
 
@@ -71,7 +71,7 @@ class Donny
     event = @queue.pop
 
     if @tweet_cache.length == 0
-      event.respond("The corrupt dems and sleepy Joe are using shenanigans to stop me from tweeting. Give me a minute.")
+      event.respond('The corrupt dems and sleepy Joe are using shenanigans to stop me from tweeting. Give me a minute.')
     else
       puts("Sending random tweet from a pool of #{@tweet_cache.length}")
       tweet = @tweet_cache.sample
